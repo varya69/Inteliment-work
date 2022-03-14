@@ -1,0 +1,62 @@
+{% extends 'base.html' %} 
+
+{% block content %} 
+
+{% if not user.is_authenticated %}
+<p>Please <a href="{% url 'login' %}">Login</a> to create schedules or <a href="{% url 'signup' %}">Register.</a></p>
+{% else %}
+
+<a href="{% url 'add' %}">Add schedule</a>
+
+{% if schedules %}
+<p>
+  <h2>{{request.user.username}}'s schedules</h2>
+</p>
+<table style="width:30%">
+  <tr>
+    <th>Schedule Date</th>
+    <th>Name</th>
+    <th>Status</th>
+  </tr>
+  {% for schedule in schedules %}
+  <tr>
+    <td>{{ schedule.date }}</td>
+    <td>
+      <a href="{% url 'update' schedule.id %}">{{ schedule.name }}</a>
+    </td>
+
+    <td>
+      <!-- <button type="button" 
+                    id='{{device.name}}'
+                    value="{{device.status|lower}}"
+                    onclick="send('{{device.name}}');"
+                    class="btn btn-primary"
+                    > -->
+      {% if schedule.completed %}
+      
+      Completed 
+      <form method="post" action="{% url 'delete' schedule.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+          Delete
+        </button>
+      </form>
+      
+      {% else %}
+      
+      Pending
+    
+      {% endif %}
+      <!-- </button> -->
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% else %}
+<p>There are no schedules for you.</p>
+{% endif %} 
+
+{% endif %} 
+
+{% endblock %}
